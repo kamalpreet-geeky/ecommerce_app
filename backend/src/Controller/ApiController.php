@@ -14,8 +14,7 @@ final class ApiController extends AbstractController
     public function getProducts(ProductRepository $productRepository , Request $request): JsonResponse
     {
         $products = $productRepository->findAll();
-        $baseUrl = $request->getSchemeAndHttpHost(); // Gets "http://127.0.0.1:8000"
-
+        $baseUrl = $request->getSchemeAndHttpHost();
         $data = array_map(fn($product) => [
             'id' => $product->getId(),
             'name' => $product->getName(),

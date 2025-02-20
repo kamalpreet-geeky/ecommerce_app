@@ -9,7 +9,7 @@ const { Option } = Select;
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const canvasRef = useRef(null);
   const fabricCanvas = useRef(null);
   const [selectedObject, setSelectedObject] = useState(null);
@@ -33,16 +33,14 @@ const ProductDetail = () => {
         backgroundColor: "#f0f0f0",
       });
 
-      // Load product image as background
       fabric.Image.fromURL(product.image, (img) => {
         img.scaleToWidth(400);
         fabricCanvas.current.setBackgroundImage(img, fabricCanvas.current.renderAll.bind(fabricCanvas.current));
       });
 
-      // Listen for object selection
       fabricCanvas.current.on("selection:created", (event) => {
         setSelectedObject(event.target);
-        if (event.target.type === "text") {
+        if (event.target.type === "i-text") {
           setTextInput(event.target.text);
         }
       });
@@ -69,6 +67,23 @@ const ProductDetail = () => {
     });
     fabricCanvas.current.add(text);
     fabricCanvas.current.setActiveObject(text);
+    fabricCanvas.current.renderAll();
+  };
+
+  const addRectangle = () => {
+    const rect = new fabric.Rect({
+      left: 50,
+      top: 50,
+      width: 100,
+      height: 50,
+      fill: "blue",
+      stroke: "black",
+      strokeWidth: 2,
+      selectable: true,
+    });
+
+    fabricCanvas.current.add(rect);
+    fabricCanvas.current.setActiveObject(rect);
     fabricCanvas.current.renderAll();
   };
 
@@ -120,16 +135,19 @@ const ProductDetail = () => {
       {/* Fabric.js Canvas */}
       <canvas ref={canvasRef} style={{ border: "1px solid #ddd" }} />
 
-      {/* Controls */}
       <div style={{ marginTop: "10px", display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
         <Button onClick={addText} type="primary">
           Add Text
         </Button>
+
+        <Button onClick={addRectangle} type="default">
+          Add Rectangle
+        </Button>
+
         <Button onClick={deleteSelectedObject} type="danger" disabled={!selectedObject}>
           Delete Selected
         </Button>
 
-        {/* Text Input (for editing selected text) */}
         <Input
           value={textInput}
           onChange={updateTextValue}
@@ -138,7 +156,6 @@ const ProductDetail = () => {
           style={{ width: "200px" }}
         />
 
-        {/* Color Picker */}
         <Input
           type="color"
           value={textColor}
@@ -147,7 +164,6 @@ const ProductDetail = () => {
           style={{ width: "50px" }}
         />
 
-        {/* Font Selector */}
         <Select
           value={fontFamily}
           onChange={changeFontFamily}
